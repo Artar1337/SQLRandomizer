@@ -3,11 +3,9 @@ package ru.sibsutis.sqlrandomizer;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;

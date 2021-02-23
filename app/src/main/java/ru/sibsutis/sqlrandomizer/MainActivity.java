@@ -4,11 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.Cursor;
 
-import java.util.Map;
+
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
+
+    SQLiteDatabase db;
+    DBHelper dbHelper;
 
     public static int getRandomNumber(int min, int max) {
         Random random = new Random();
@@ -19,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
         Random random = new Random();
         return (float) random.nextInt(max - min)
                 + min + random.nextFloat();
+    }
+
+    public static boolean getRandomBoolean() {
+        Random random = new Random();
+        return random.nextBoolean();
     }
 
     private String generateName(boolean isMale) {
@@ -104,12 +114,50 @@ public class MainActivity extends AppCompatActivity {
         return name;
     }
 
+    private String createRandomRecord(int ID) {
+        String name = generateName(getRandomBoolean());
+        float weight = getRandomFloat(50, 90);
+        int height = getRandomNumber(150, 210);
+        int age = getRandomNumber(17, 30);
+
+        String numberAsString = String.format("%.1f", weight);
+
+        return "(" + ID + ",'"
+                + name + "'," + numberAsString + ","
+                + height + "," + age + ")";
+    }
+
+    private void generateDataBase() {
+        for (int i = 1; i < 21; i++) {
+            String query = createRandomRecord(i);
+            db.execSQL("INSERT INTO students" +
+                    "('id','name','weight','height','age') VALUES " +
+                    query + ";");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.wtf("name is ", generateName(false));
-        Log.wtf("name is ", generateName(true));
+
+        dbHelper = new DBHelper(MainActivity.this);
+        db = dbHelper.getWritableDatabase();
+        db.delete("students", null, null);
+        generateDataBase();
+        Cursor c;
+        c = db.rawQuery("Select * from students ORDER BY 'age' ASC", null);
+        if (c.moveToFirst()) {
+            do {
+                int ColIndex = c.getColumnIndex("name");
+                Log.v("value ", c.getString(ColIndex));
+                ColIndex = c.getColumnIndex("weight");
+                Log.v("value ", c.getString(ColIndex));
+                ColIndex = c.getColumnIndex("height");
+                Log.v("value ", c.getString(ColIndex));
+                ColIndex = c.getColumnIndex("age");
+                Log.v("value ", c.getString(ColIndex));
+            } while (c.moveToNext());
+        }
     }
 }

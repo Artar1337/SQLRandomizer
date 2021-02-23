@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         db.delete("students", null, null);
         generateDataBase();
         Cursor c;
-        c = db.rawQuery("Select * from students ORDER BY 'age' ASC", null);
+        c = db.rawQuery("Select * from students ORDER BY age", null);
         if (c.moveToFirst()) {
             do {
                 int ColIndex = c.getColumnIndex("name");

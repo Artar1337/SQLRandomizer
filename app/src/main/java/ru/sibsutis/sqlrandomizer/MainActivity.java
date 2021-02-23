@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
         db.delete("students", null, null);
         generateDataBase();
         Cursor c;
-        c = db.rawQuery("Select * from students ORDER BY age", null);
+        c = db.rawQuery("Select * from students ORDER BY age,name", null);
         if (c.moveToFirst()) {
             do {
                 TableRow row = new TableRow(this);

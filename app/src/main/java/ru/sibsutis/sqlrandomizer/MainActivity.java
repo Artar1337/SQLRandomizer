@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -17,6 +20,9 @@ public class MainActivity extends AppCompatActivity {
 
     SQLiteDatabase db;
     DBHelper dbHelper;
+    TableLayout table;
+    Button bCreate;
+
 
     public static int getRandomNumber(int min, int max) {
         Random random = new Random();
@@ -139,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addColumnToRow(String string,TableRow row){
+    private void addColumnToRow(String string, TableRow row) {
         TextView textview = new TextView(this);
         textview.setTextColor(getResources().getColor(R.color.black));
         textview.setBackgroundColor(getResources().getColor(R.color.table_color));
@@ -147,20 +153,15 @@ public class MainActivity extends AppCompatActivity {
         row.addView(textview);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        TableLayout table = findViewById(R.id.TableLayout);
+    public void createTable() {
         table.setShrinkAllColumns(true);
         table.setStretchAllColumns(true);
         TableRow initRow = new TableRow(this);
-        addColumnToRow("№",initRow);
-        addColumnToRow("ФИ",initRow);
-        addColumnToRow("Вес",initRow);
-        addColumnToRow("Рост",initRow);
-        addColumnToRow("Возраст",initRow);
+        addColumnToRow("№", initRow);
+        addColumnToRow("ФИ", initRow);
+        addColumnToRow("Вес", initRow);
+        addColumnToRow("Рост", initRow);
+        addColumnToRow("Возраст", initRow);
         table.addView(initRow);
 
         dbHelper = new DBHelper(MainActivity.this);
@@ -174,18 +175,36 @@ public class MainActivity extends AppCompatActivity {
                 TableRow row = new TableRow(this);
 
                 int ColIndex = c.getColumnIndex("id");
-                addColumnToRow(c.getString(ColIndex),row);
+                addColumnToRow(c.getString(ColIndex), row);
                 ColIndex = c.getColumnIndex("name");
-                addColumnToRow(c.getString(ColIndex),row);
+                addColumnToRow(c.getString(ColIndex), row);
                 ColIndex = c.getColumnIndex("weight");
-                addColumnToRow(c.getString(ColIndex),row);
+                addColumnToRow(c.getString(ColIndex), row);
                 ColIndex = c.getColumnIndex("height");
-                addColumnToRow(c.getString(ColIndex),row);
+                addColumnToRow(c.getString(ColIndex), row);
                 ColIndex = c.getColumnIndex("age");
-                addColumnToRow(c.getString(ColIndex),row);
+                addColumnToRow(c.getString(ColIndex), row);
 
                 table.addView(row);
             } while (c.moveToNext());
         }
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        bCreate = (Button) findViewById(R.id.ButtonCreate);
+        table = findViewById(R.id.TableLayout);
+        View.OnClickListener operationListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                table.removeAllViewsInLayout();
+                createTable();
+            }
+        };
+        bCreate.setOnClickListener(operationListener);
+        createTable();
+    }
+
 }

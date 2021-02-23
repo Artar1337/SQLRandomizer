@@ -6,6 +6,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.Cursor;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 
 import java.util.Random;
@@ -136,10 +139,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void addColumnToRow(String string,TableRow row){
+        TextView textview = new TextView(this);
+        textview.setTextColor(getResources().getColor(R.color.black));
+        textview.setBackgroundColor(getResources().getColor(R.color.table_color));
+        textview.setText(string);
+        row.addView(textview);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        TableLayout table = findViewById(R.id.TableLayout);
+        table.setShrinkAllColumns(true);
+        table.setStretchAllColumns(true);
+        TableRow initRow = new TableRow(this);
+        addColumnToRow("№",initRow);
+        addColumnToRow("ФИ",initRow);
+        addColumnToRow("Вес",initRow);
+        addColumnToRow("Рост",initRow);
+        addColumnToRow("Возраст",initRow);
+        table.addView(initRow);
 
         dbHelper = new DBHelper(MainActivity.this);
         db = dbHelper.getWritableDatabase();
@@ -149,14 +171,20 @@ public class MainActivity extends AppCompatActivity {
         c = db.rawQuery("Select * from students ORDER BY age", null);
         if (c.moveToFirst()) {
             do {
-                int ColIndex = c.getColumnIndex("name");
-                Log.v("value ", c.getString(ColIndex));
+                TableRow row = new TableRow(this);
+
+                int ColIndex = c.getColumnIndex("id");
+                addColumnToRow(c.getString(ColIndex),row);
+                ColIndex = c.getColumnIndex("name");
+                addColumnToRow(c.getString(ColIndex),row);
                 ColIndex = c.getColumnIndex("weight");
-                Log.v("value ", c.getString(ColIndex));
+                addColumnToRow(c.getString(ColIndex),row);
                 ColIndex = c.getColumnIndex("height");
-                Log.v("value ", c.getString(ColIndex));
+                addColumnToRow(c.getString(ColIndex),row);
                 ColIndex = c.getColumnIndex("age");
-                Log.v("value ", c.getString(ColIndex));
+                addColumnToRow(c.getString(ColIndex),row);
+
+                table.addView(row);
             } while (c.moveToNext());
         }
     }
